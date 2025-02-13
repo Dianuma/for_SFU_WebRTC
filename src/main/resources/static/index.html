@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+<body>
+<h2>WebSocket Test</h2>
+<div id="status">Connecting...</div>
+<button id="joinButton">Join Room</button>
+<button id="disconnectButton">Disconnect Room</button>
+<button id="offerRoomIdList">Offer Room Id List</button>
+<script>
+    // const ws = new WebSocket('ws://localhost:8080/signal'); // 서버의 WebSocket URL (Spring Boot에서 지정한 엔드포인트)
+
+    const ws = new WebSocket("ws://192.168.219.117:8080/signal");
+
+    console.log(ws);
+
+    ws.onopen = function() {
+        document.getElementById('status').innerText = 'Connected';
+        console.log('Connected to WebSocket');
+    };
+
+    ws.onmessage = function(event) {
+        console.log("Received:", event.data);
+        const message = JSON.parse(event.data);
+        // 메시지 처리 예시
+        if (message.type === 'all_users') {
+            console.log("All users:", message.allUsers);
+        }
+    };
+
+    ws.onclose = function() {
+        document.getElementById('status').innerText = 'Disconnected';
+        console.log('Disconnected from WebSocket');
+    };
+
+    ws.onerror = function(error) {
+        console.log('WebSocket Error:', error);
+    };
+
+    // 버튼 클릭 이벤트
+    document.getElementById('joinButton').onclick = function() {
+        const sender = "client" + Math.floor(Math.random() * 1000); // sender를 랜덤으로 설정
+        const roomId = 1; // 예시로 roomId는 1로 설정 (원하는 대로 변경 가능)
+        const randomData = "Random message " + Math.floor(Math.random() * 100); // 랜덤 메시지
+
+        const message = {
+            sender: sender,
+            type: "join_room",
+            roomId: roomId,
+            data: randomData
+        };
+
+        // WebSocket을 통해 메시지 전송
+        ws.send(JSON.stringify(message));
+        console.log("Sent message:", message);
+    };
+
+    // Disconnect 버튼 클릭 이벤트
+    document.getElementById('disconnectButton').onclick = function() {
+        // WebSocket 연결 종료
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+            console.log("WebSocket connection closed.");
+        } else {
+            console.log("WebSocket is not open.");
+        }
+    };
+
+    // 룸 정보 요청 버튼
+    document.getElementById('offerRoomIdList').onclick = function() {
+        const message = {
+            roomId: 1,
+            type: "room_list",
+            data: "Please send to me the room list as room id"
+        };
+
+        ws.send(JSON.stringify(message))
+    };
+</script>
+</body>
+</html>

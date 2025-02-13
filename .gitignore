@@ -2,6 +2,7 @@ HELP.md
 .gradle
 gradle
 build/
+node_modules/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -25,7 +26,6 @@ bin/
 *.ipr
 out/
 !**/src/main/**/out/
-!**/src/test/**/out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -44,3 +44,4 @@ out/
 *.ear
 *.nar
 hs_err_pid*
+
